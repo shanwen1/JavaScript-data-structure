@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  //封装链表的类
+  function LinkedList() {
+
+    //属性
+    this.head = null
+    this.length = 0
+
+    //封装一个内部类，节点类Node
+    function Node(data,next) {
+        this.data = data
+        this.next = null
+    }
+
+    //1.添加一个追加方法
+    LinkedList.prototype.append = function (data) {
+
+      //先通过data创建新节点
+      var newNode = new Node(data)
+
+      //首先判断添加的是否是第一个节点
+      //链表长度是0，说明这个节点是头节点
+      if (this.length == 0){
+        //所以这个时候把这个节点指向头节点
+        this.head = newNode
+      }else{
+        //如果这个节点不是头节点，就开始指向后面的中间节点
+        //不过需要注意的是，也要看看这是不是尾节点
+
+        //current默认链接head
+        var current = this.head
+
+        //这个时候的添加一个条件循环，判断next指向的元素是不是空的
+        while (current.next) {
+          //不是空的话，那么current此时就不指向head
+          //这个时候就指向下一个节点的next
+          current = current.next
+        }
+        //当某个next的节点为null，即为空值的时候
+        //最后节点的next指向新的节点
+        current.next =newNode
+      }//新节点生成以后，整个链表的长度加1
+      this.length += 1
+
+      //2.添加一个toString方法
+      LinkedList.prototype.toString = function () {
+        //定义一个变量
+        var current = this.head
+        var ListString = ""
+        //循环获取一个个节点
+        while (current){
+          ListString += current.data + " "
+          current = current.next
+        }
+        return ListString
+      }
+    }
+
+    //3.添加一个insert方法
+    LinkedList.prototype.insert = function (position, data) {
+      //对position进行一个边界判断
+      //position应该是正值
+      if (position < 0 || position > this.length) return false
+
+      //根据data创建new node
+      var newNode = new Node(data)
+
+      //情况1，头插入
+      //判断插入的位置是否为第一个
+      if (position == 0) {
+        //已经知道一个链节点由data和next组成，next连接的是下一个链节点的data
+        //当插入的位置是第一个时，意味着要把原来head指向的data值替换成newNode，即Node的data
+        //那么如何完成这个操作呢？
+        //原来第一个的head的指针指向的就是第一个data
+        //所以要从head这里获取第一个指向data的指针
+        //这个时候把原来head指向第一个节点的指针赋值给next
+        //就可以把指针和head连接起来
+        newNode.next = this.head
+        //这个时候再把Node的data部分，即newNode赋值给已经断开链接head指针
+        //就可以把newNode和前面的head链接好
+        this.head = newNode
+      }else{
+        //情况2，中间以及在最后插入
+        var index = 0
+        //在开始寻找index插入的位置之前，先创建一个当前变量current
+        var current = this.head
+        //同时也创建一个先前变量previous
+        //因为head之前没有链表单元，所以previous指向的是空
+        var previous = null
+        //这里循环的条件是当index的位置小于position的数值的时候才会开始循环
+        //*这里为什么是index++呢
+        //这里是准备先index和position比较，然后再循环一次+1
+        //接下来再和position比较，顺序是先比较再加1
+        while (index++ < position){
+          //当index的数值小于position的数值的时候，开始执行下面的操作
+          //把current的前端值赋给previous
+          //把current的后端值赋给current
+          //这样就保证了newNode的前后端都有连接的变量
+          previous = current
+          current = current.next
+        }
+        //最后当前量的值变成newNode.next
+        newNode.next = current
+        previous.next = newNode
+      }
+      // length+1
+      this.length += 1
+      return true
+    }
+
+    //get方法
+    LinkedList.prototype.get = function (position) {
+      //越界判断
+      if (position < 0 || position >= this.length) return null
+
+      //获取对应的data
+      var current = this.head
+      var index = 0
+      while (index++ < position) {
+        current = current.next
+      }
+      return current.data
+    }
+
+  //indexOf方法
+    LinkedList.prototype.indexOf = function (data) {
+      //定义变量
+      var current = this.head
+      var index = 0
+      while (current){
+        if (current.data == data){
+          return index
+        }
+        current = current.next
+        index += 1
+      }
+      return -1
+    }
+
+    //update方法
+    LinkedList.prototype.update = function (position,newData) {
+      //越界判断
+      if (position < 0 || position >= this.length) return null
+
+     //查找正确的节点
+      current = this.head
+      var index = 0
+      while (index++ < position ){
+        current = current.next
+      }
+      //将position位置的node的data修改成newData
+      current.data = newData
+      return true
+    }
+
+    //removeAt方法
+    LinkedList.prototype.removeAt = function (position) {
+      //越界判断
+      if (position < 0 || position >= this.length) return null
+
+      //情况1 节点的第一个被删除
+      current = this.head
+      if (position == 0){
+        this.head = this.head.next
+      }else{
+        //情况2
+        var index = 0
+        previous = null
+        while (index++ < position){
+          previous = current
+          current = current.next
+        }
+        previous.next = current.next
+      }
+      this.length -= 1
+      return  current.data
+    }
+
+    //remove方法
+    LinkedList.prototype.remove = function (data) {
+      //获取data在列表的位置
+      var position = this.indexOf(data)
+
+      //根据位置信息删除节点
+      return this.removeAt(position)
+    }
+
+    //isEmpty方法
+    LinkedList.prototype.isEmpty = function () {
+      return this.length == 0
+    }
+
+    //size方法
+    LinkedList.prototype.size = function () {
+      return this.length
+    }
+  }
+
+
+  //测试代码
+  //创建一个LinkedList
+  var list = new LinkedList()
+  //测试LinkedList方法
+  list.append('abc')
+  list.append('cba')
+  list.append('nba')
+  //alert(list)
+
+  //链表的常见操作
+  //测试insert方法
+  list.insert(0,'aaa')
+  list.insert(3,'bbb')
+  list.insert(5,'ccc')
+  alert(list)
+
+  // //测试get方法
+  // alert(list.get(0))
+  // alert(list.get(3))
+  // alert(list.get(5))
+  //
+  // //测试indexOf方法
+  // alert(list.indexOf('aaa'))
+  // alert(list.indexOf('bbb'))
+  // alert(list.indexOf('ccc'))
+
+  //测试update方法
+  list.update(0,'nnn')
+  list.update(3,'fff')
+  alert(list)
+
+  //removeAt 方法的测试
+  list.removeAt(0)
+  alert(list)
+  list.removeAt(3)
+  alert(list)
+
+  //remove方法的测试
+  list.remove('cba')
+  alert(list)
+  list.remove('abc')
+  alert(list)
+
+  //测试isEmpty和size
+  alert(list.isEmpty())
+  alert(list.size())
+
+</script>
+</body>
+</html>

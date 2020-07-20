@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>栈的封装</title>
+</head>
+<body>
+<script>
+  function Stack() {
+    this.items = []
+    //栈的相关操作
+    //PUSH操作在堆栈的顶部加入一个元素
+    //POP操作相反， 在堆栈顶部移去一个元素， 并将堆栈的大小减一
+    //将元素压入到栈
+    Stack.prototype.push = function (element) {
+      this.items.push(element)
+    }
+    //从栈中取出元素
+    Stack.prototype.pop = function (element) {
+      return this.items.pop(element)
+    }
+    //查看一下栈顶元素
+    Stack.prototype.peek = function (element) {
+      return this.items[this.items.length - 1]
+    }
+    //判断栈是否为空
+    Stack.prototype.isEmpty = function (element) {
+      return this.items.length == 0
+    }
+    //获取栈中的元素个数
+    Stack.prototype.size = function () {
+      return this.items.length
+    }
+    //to string的方法
+    Stack.prototype.toString = function () {
+      var resultString = ''
+      for (var i = 0; i < this.items.length; i++) {
+        resultString += this.items[i] + ' '
+      }
+      return resultString
+    }
+  }
+  //栈的使用
+  var s = new Stack()
+    s.push(20)
+    s.push(10)
+    s.push(100)
+    s.push(77)
+    alert(s)
+
+    s.pop()
+    s.pop()
+    alert(s)
+    alert(s.peek())
+    alert(s.isEmpty())
+    alert(s.size)
+</script>
+</body>
+</html>

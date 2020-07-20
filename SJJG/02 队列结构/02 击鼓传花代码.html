@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  function Queue() {
+    //属性是个数组
+    this.items = []
+    //方法
+    //1.将元素加入到队列中
+    Queue.prototype.enqueue = function (element) {
+      this.items.push(element)
+    }
+    //2.从队列中删除队列里的第一个元素
+    Queue.prototype.dequeue = function () {
+      return this.items.shift()
+    }
+    //3.查看队列里的第一个元素
+    Queue.prototype.front = function () {
+      return this.items[0]
+    }
+    //4.查看队列中元素的个数
+    Queue.prototype.size = function () {
+      return this.items.length
+    }
+  }
+
+  //击鼓传花规则：几个人围成一圈数数，数到某个数字淘汰，下一个再重新数数
+  //请问最后剩下是人最开始是哪个位置
+
+  //击鼓传花代码
+  function passGame(nameList,num) {
+
+    //创建一个队列结构
+    var queue = new Queue()
+
+    //将所有人依次加入队列中
+    for (var i = 0; i < nameList.length; i++){
+      //执行这个入栈函数
+      //这个地方要入栈的对象是数组
+      queue.enqueue(nameList[i])
+    }
+
+    //开始数数，不是num的时候，重新加到队列的末尾，如果是num的数字，将其删除
+
+    //不过当队列的最后只剩下一个元素的时候，这个循环就要结束了，所以要在外头嵌套一个循环
+    while (queue.size() > 1){
+
+      //这个循环的意思是，当前面的人没有数到对应的数字的时候
+      //他就会到队列的末尾
+      //到对列末尾怎么实现呢？
+      //就是得先从队列的头部删除，再从队列的尾部插入
+      for (var i = 0; i< num-1; i++){
+        queue.enqueue(queue.dequeue())
+      }
+      //后面那个人是当那个人数到num的数字
+      //那么数到num这个数字的人就从队列里删除
+      queue.dequeue()
+    }
+
+    //获取剩下的那一个人
+    alert("最终剩下了" + queue.size() + "个人")
+    var endName = queue.front()
+    alert("最终剩下的人是:" + endName)
+    //indexOf() 方法可返回某个指定的字符串值在字符串中首次出现的位置
+    alert("他最开始坐的位子是" + nameList.indexOf(endName))
+  }
+//测试击鼓传花/
+  names = ['a','b','c','d','e','f']
+  passGame(names, 2)
+
+
+  //自己后来编的
+  //反思：自己还是有些地方不熟悉，没有创建队列，
+  //
+  // function youXi(mingZi,n) {
+  //   var queuee = new Queue()
+  //   for (var j = 0; j < mingZi.length; j++){
+  //     queuee.enqueue(mingZi[j])
+  //   }
+  //   while (queuee.size() > 1){
+  //     for(var j = 0; j < n-1; j++){
+  //       queuee.enqueue(queuee.dequeue())
+  //     }
+  //     queuee.dequeue()
+  //   }
+  //   var last = queuee.front()
+  //   alert(last)
+  //   alert(mingZi.indexOf(last))
+  // }
+  //
+  // mingZi = ['a','b','c','d','e','f']
+  // youXi(mingZi, 1)
+
+  //
+
+  // function game(List,n) {
+  //   var queuee = new Queue()
+  //   for(var j = 0; j < List.length; j++){
+  //     queuee.enqueue(List[j])
+  //   }
+  //   while (queuee.size() > 1){
+  //     for (var j = 0; j < n-1 ;j++){
+  //       queuee.enqueue(queuee.dequeue())
+  //     }
+  //     queuee.dequeue()
+  //   }
+  //   var last = queuee.front()
+  //   alert(last)
+  //   alert(List.indexOf(last))
+  // }
+  //
+  // List = ['a','b','c','d','e','f']
+  // game(List, 1)
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+
+  //封装优先级队列优先级队列里头包含一个内部的含有优先级权值的对象
+  function PriorityQueue() {
+
+    //在PriorityQueue重新创建了一个队列结构；可以理解为一个内部类
+    function QueueElement(element, priority) {
+      this.element = element
+      this.priority = priority
+    }
+
+    //封装属性
+    this.items = []
+
+    //添加toString方法
+    PriorityQueue.prototype.toString = function () {
+      var resultString = ''
+      for (var i=0; i < this.items.length; i++) {
+        resultString += this.items[i].element + '-' + this.items[i].priority + ' '
+      }
+      return resultString
+    }
+
+    //在优先级队列中添加一个插入方法
+    //*prototype 属性使您有能力向对象添加属性和方法
+    //同时，prototype指向的是前面的PriorityQueue，所以这个prototype是为前面服务的
+    PriorityQueue.prototype.enqueue = function (element, priority) {
+      //这里给函数enqueue添加了两个返回值
+      // 一个是对象element，用来储存要用的对象
+      //一个是priority，所储存对象优先级的权值，用于后面优先级的比较
+
+      //创建对象
+      var queueElement = new QueueElement(element, priority)
+
+      //判断队列是否为空
+      if (this.items.length == 0){
+        //如果队列的长度等于0的话，就先放进一个对象
+        this.items.push(queueElement)
+      } else {
+        //如果队列不为空，说明这个时候已经有队列元素了
+        //这个时候就可以进行比较排序了
+
+        //默认added为false 意思就是没有被插入
+        var added = false
+        //这时候执行插入的循环语句
+        //比较权值的大小
+        for (var i =0; i < this.items.length; i++){
+          if (queueElement.priority < this.items[i].priority){
+            this.items.splice(i, 0, queueElement)
+            //因为这个时候已经找到了比priority比自己大的元素
+            //所以这个时候显示的是插入
+            //那么这个时候added显示的是true
+            //这个时候循环就暂停了
+            added = true
+            break
+          }
+        }
+
+        //这里表示的是在上一个循环中从头到尾比较以后他的priority值还是最大
+        //他从头到尾都没有添加进去，这个时候就push这个数字，push就是从栈顶
+        //即队列的末尾添加这个数字
+        // 这个时候就执行push指令
+
+        //（!added）表示的是只有当!added不为零
+        // 即added为零的时候（这个时候表示的是added现在还是false的状态）
+        if (!added){
+          this.items.push(queueElement)
+        }
+      }
+    }
+  }
+
+  //测试代码
+      var pq = new PriorityQueue()
+      pq.enqueue('a',1434)
+      pq.enqueue('b',23)
+      pq.enqueue('c',324)
+      pq.enqueue('d',44)
+      pq.enqueue('e',5434)
+      pq.enqueue('f',63)
+      alert(pq)
+
+</script>
+</body>
+</html>
